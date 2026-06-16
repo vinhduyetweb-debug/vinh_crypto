@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vinh Crypto">
+  <rect width="512" height="512" rx="96" fill="#08111f"/>
+  <path d="M128 328h256v40H128z" fill="#20c997"/>
+  <path d="M128 144h256v40H128z" fill="#3b82f6"/>
+  <path d="M156 208h200v40H156z" fill="#f2b84b"/>
+  <path d="M188 272h136v40H188z" fill="#eef4ff"/>
+  <path d="M118 118h276v276H118z" fill="none" stroke="#8b5cf6" stroke-width="22"/>
+</svg>

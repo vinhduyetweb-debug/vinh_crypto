@@ -1,0 +1,18 @@
+{
+  "name": "Vinh Crypto Control Panel",
+  "short_name": "Vinh Crypto",
+  "description": "Personal static crypto dashboard for market tracking, BTC treasury planning, snapshots and decision journal.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08111f",
+  "theme_color": "#08111f",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

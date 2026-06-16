@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <title>Vinh Crypto Control Panel V6.0</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Personal market dashboard</p>
+        <h1>Vinh Crypto Control Panel</h1>
+        <p class="subhead">Theo dõi thị trường, quản trị rủi ro, hỗ trợ DCA BTC và ghi lại quyết định cá nhân.</p>
+      </div>
+      <div class="status-panel">
+        <span class="version">V6.0</span>
+        <span id="networkStatus" class="pill">Online</span>
+        <span id="lastSuccess" class="muted small">Chưa cập nhật</span>
+      </div>
+    </header>
+
+    <section class="notice">
+      Dashboard này chỉ là công cụ tham khảo, không phải lời khuyên đầu tư. Không auto trade, không kết nối ví, không futures/leverage.
+    </section>
+
+    <nav class="tabs" aria-label="Khu vực dashboard">
+      <button class="tab active" data-tab="market" type="button">Market</button>
+      <button class="tab" data-tab="treasury" type="button">BTC Treasury</button>
+      <button class="tab" data-tab="journal" type="button">Snapshot & Journal</button>
+    </nav>
+
+    <section id="marketTab" class="tab-panel active">
+      <section class="toolbar">
+        <div class="search-box">
+          <input type="text" id="tokenInput" value="BTC" autocomplete="off" placeholder="Nhập token: BTC, ETH, SOL...">
+          <button id="btnSignal" type="button">Xem chi tiết</button>
+        </div>
+        <button id="btnRefresh" class="secondary" type="button">Làm mới dữ liệu</button>
+      </section>
+
+      <section class="watchlist-editor">
+        <div>
+          <h2>Watchlist cá nhân</h2>
+          <p class="muted">Mặc định: BTC, OKB, ATOM, ETH, SOL, USDT. Dữ liệu lưu trên trình duyệt của bạn.</p>
+        </div>
+        <div class="inline-form">
+          <input id="watchSymbol" type="text" placeholder="Thêm token">
+          <button id="btnAddWatch" type="button">Thêm</button>
+          <button id="btnResetWatch" class="ghost" type="button">Reset</button>
+        </div>
+      </section>
+
+      <div id="messageBox" class="message hidden"></div>
+      <div id="loading" class="loading hidden">Đang tải dữ liệu...</div>
+
+      <section class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Price</th>
+              <th>24h %</th>
+              <th>ATH drawdown</th>
+              <th>Rank</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="watchlistBody"></tbody>
+        </table>
+      </section>
+
+      <section id="detailDashboard" class="dashboard">
+        <article class="card main-card">
+          <div class="card-top">
+            <div>
+              <h2 id="detailSymbol">BTC</h2>
+              <p id="coinName" class="coin-name">Bitcoin</p>
+            </div>
+            <span id="marketStatus" class="pill">LIVE</span>
+          </div>
+          <p>Giá hiện tại: <strong id="price">--</strong></p>
+          <p>Vốn hóa: <strong id="marketCap">--</strong></p>
+          <p>Xếp hạng vốn hóa: <strong id="rank">--</strong></p>
+        </article>
+
+        <article class="card">
+          <h3>ATH / ATL</h3>
+          <p>ATH: <strong id="ath">--</strong></p>
+          <p class="muted" id="athDate">--</p>
+          <p>Giảm từ ATH: <strong id="athChange">--</strong></p>
+          <p>ATL: <strong id="atl">--</strong></p>
+        </article>
+
+        <article class="card">
+          <h3>Fear & Greed</h3>
+          <div class="metric" id="fear">Không có dữ liệu</div>
+          <p class="muted" id="fearNote">Đo tâm lý chung của thị trường crypto.</p>
+        </article>
+
+        <article class="card">
+          <h3>Funding Rate</h3>
+          <div class="metric" id="funding">Không có dữ liệu</div>
+          <p class="muted" id="fundingNote">Không hỗ trợ / Không có dữ liệu.</p>
+        </article>
+
+        <article class="card">
+          <h3>Điểm Tích Lũy</h3>
+          <div class="score buy" id="accumScore">0</div>
+        </article>
+
+        <article class="card">
+          <h3>Điểm Giảm Rủi Ro</h3>
+          <div class="score reduce" id="riskReduceScore">0</div>
+        </article>
+
+        <article class="card">
+          <h3>Trạng thái thị trường</h3>
+          <div class="phase" id="phase">--</div>
+        </article>
+
+        <article class="card">
+          <h3>Gợi ý an toàn</h3>
+          <div class="action" id="action">--</div>
+        </article>
+
+        <article class="card full">
+          <h3>Lý do tín hiệu</h3>
+          <div class="reason-grid">
+            <div>
+              <h4>Tín hiệu tích lũy</h4>
+              <ul id="accumReasons"></ul>
+            </div>
+            <div>
+              <h4>Tín hiệu giảm rủi ro</h4>
+              <ul id="reduceReasons"></ul>
+            </div>
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <section id="treasuryTab" class="tab-panel">
+      <section class="treasury-grid">
+        <article class="card full">
+          <h2>BTC Treasury</h2>
+          <p class="muted">Nhập thủ công số lượng tài sản. App chỉ tính toán nội bộ, không kết nối sàn.</p>
+          <form id="portfolioForm" class="asset-grid"></form>
+          <div class="form-row">
+            <label>Exchange exposure USD
+              <input id="exchangeExposure" type="number" min="0" step="0.01" placeholder="0">
+            </label>
+            <button id="btnSavePortfolio" type="button">Lưu danh mục</button>
+            <button id="btnResetPortfolio" class="ghost" type="button">Xóa danh mục</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Tổng giá trị USD</h3>
+          <div id="totalUsd" class="metric">--</div>
+        </article>
+        <article class="card">
+          <h3>Tổng BTC quy đổi</h3>
+          <div id="totalBtc" class="metric">--</div>
+        </article>
+        <article class="card">
+          <h3>Risk Score</h3>
+          <div id="riskScore" class="score neutral">0</div>
+        </article>
+        <article class="card">
+          <h3>Action Suggestion</h3>
+          <div id="treasurySuggestion" class="action">Dữ liệu chưa đủ, không hành động</div>
+        </article>
+
+        <article class="card full">
+          <h3>Phân bổ danh mục</h3>
+          <div id="allocationList" class="allocation-list"></div>
+        </article>
+
+        <article class="card full">
+          <h3>DCA BTC Panel</h3>
+          <div class="dca-grid">
+            <label>Số USDT dự kiến DCA
+              <input id="dcaAmount" type="number" min="0" step="0.01" placeholder="300">
+            </label>
+            <label>Số lệnh chia nhỏ
+              <input id="dcaOrders" type="number" min="1" step="1" placeholder="6">
+            </label>
+            <label>Chu kỳ
+              <select id="dcaCycle">
+                <option value="ngày">Ngày</option>
+                <option value="tuần">Tuần</option>
+                <option value="tháng">Tháng</option>
+              </select>
+            </label>
+            <button id="btnCalcDca" type="button">Tính DCA</button>
+          </div>
+          <div id="dcaResult" class="result-box">Nhập kế hoạch để xem ước tính. Không mua đuổi, không all-in.</div>
+        </article>
+      </section>
+    </section>
+
+    <section id="journalTab" class="tab-panel">
+      <section class="journal-actions">
+        <button id="btnSaveSnapshot" type="button">Lưu snapshot hôm nay</button>
+        <button id="btnExport" class="secondary" type="button">Export JSON</button>
+        <label class="import-label">Import JSON
+          <input id="importFile" type="file" accept="application/json">
+        </label>
+      </section>
+
+      <section class="two-col">
+        <article class="card">
+          <h2>Snapshot history</h2>
+          <div id="snapshotList" class="history-list"></div>
+        </article>
+        <article class="card">
+          <h2>Decision journal</h2>
+          <form id="journalForm" class="journal-form">
+            <label>Ngày
+              <input id="journalDate" type="date">
+            </label>
+            <label>Hành động
+              <select id="journalAction">
+                <option>DCA</option>
+                <option>Hold</option>
+                <option>Reduce Risk</option>
+                <option>Note</option>
+              </select>
+            </label>
+            <label>Token liên quan
+              <input id="journalToken" type="text" placeholder="BTC">
+            </label>
+            <label>Số tiền nếu có
+              <input id="journalAmount" type="number" min="0" step="0.01">
+            </label>
+            <label>Nội dung ghi chú
+              <textarea id="journalNote" rows="4" placeholder="Ghi lại lý do quyết định..."></textarea>
+            </label>
+            <button type="submit">Lưu journal</button>
+          </form>
+          <div id="journalList" class="history-list"></div>
+        </article>
+      </section>
+    </section>
+
+    <footer>
+      <p>Vinh Crypto Control Panel V6.0. Công cụ tham khảo cá nhân, không phải lời khuyên đầu tư. Dữ liệu cá nhân chỉ lưu trong localStorage.</p>
+    </footer>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
